@@ -7,6 +7,7 @@ from PIL import Image, ImageTk
 import tkinter as tk
 from io import BytesIO
 
+
 class Node:
     def __init__(self, x, y, parent=None):
         self.x = x
@@ -16,14 +17,17 @@ class Node:
         self.h = 0
         self.f = 0
 
+
 def is_valid_move(x1, y1, x2, y2):
     # Sprawdzenie czy ruch jest dozwolony dla królowej
     dx = abs(x2 - x1)
     dy = abs(y2 - y1)
     return (dx == dy or x1 == x2 or y1 == y2)
 
+
 def is_valid_position(x, y, obstacles):
     return (x, y) not in obstacles
+
 
 def astar(start, goal, obstacles):
     start_x, start_y = ord(start[0]) - ord('a'), int(start[1]) - 1
@@ -51,11 +55,10 @@ def astar(start, goal, obstacles):
         if current_node.x == goal_node.x and current_node.y == goal_node.y:
             path = []
             while current_node is not None:
-                path.append((chr(current_node.x + ord('a')), current_node.y + 1))
+                path.append(chr(current_node.x + ord('a')) + str(current_node.y + 1))
                 current_node = current_node.parent
             return path[::-1]
 
-        children = []
         for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]:
             node_position = (current_node.x + new_position[0], current_node.y + new_position[1])
 
@@ -65,124 +68,34 @@ def astar(start, goal, obstacles):
             if not is_valid_move(current_node.x, current_node.y, node_position[0], node_position[1]):
                 continue
 
-            if not is_valid_position(node_position[0], node_position[1], obstacles):
+            if (chr(node_position[0] + ord('a')), node_position[1] + 1) in obstacles:
+                continue
+
+            if any(node_position[0] == node.x and node_position[1] == node.y for node in closed_list):
                 continue
 
             new_node = Node(node_position[0], node_position[1], current_node)
 
-            children.append(new_node)
-
-        for child in children:
-            for closed_child in closed_list:
-                if child.x == closed_child.x and child.y == closed_child.y:
-                    continue
-
-            child.g = current_node.g + 1
-            child.h = ((child.x - goal_node.x) ** 2) + ((child.y - goal_node.y) ** 2)
-            child.f = child.g + child.h
+            new_node.g = current_node.g + 1
+            new_node.h = ((new_node.x - goal_node.x) ** 2) + ((new_node.y - goal_node.y) ** 2)
+            new_node.f = new_node.g + new_node.h
 
             for open_node in open_list:
-                if child.x == open_node.x and child.y == open_node.y and child.g > open_node.g:
+                if new_node.x == open_node.x and new_node.y == open_node.y and new_node.g > open_node.g:
                     continue
 
-            open_list.append(child)
+            open_list.append(new_node)
 
     return None
+
 
 # Przykładowe użycie:
 start = "a1"
 goal = "e8"
-obstacles = [("a", 3), ("b", 4)]  # Przeszkody w postaci listy krotek (x, y)
+obstacles = [('c', 3), ("b", 8)]  # Przeszkody w postaci listy krotek (x, y)
 
 droga = astar(start, goal, obstacles)
 print(droga)
-
-
-
-class Node:
-    def __init__(self, x, y, parent=None):
-        self.x = x
-        self.y = y
-        self.parent = parent
-        self.g = 0
-        self.h = 0
-        self.f = 0
-
-def is_valid_move(x1, y1, x2, y2):
-    # Sprawdzenie czy ruch jest dozwolony dla królowej
-    dx = abs(x2 - x1)
-    dy = abs(y2 - y1)
-    return (dx == dy or x1 == x2 or y1 == y2)
-
-def astar(start, goal):
-    start_x, start_y = ord(start[0]) - ord('a'), int(start[1]) - 1
-    goal_x, goal_y = ord(goal[0]) - ord('a'), int(goal[1]) - 1
-
-    open_list = []
-    closed_list = []
-
-    start_node = Node(start_x, start_y)
-    goal_node = Node(goal_x, goal_y)
-
-    open_list.append(start_node)
-
-    while open_list:
-        current_node = open_list[0]
-        current_index = 0
-        for index, item in enumerate(open_list):
-            if item.f < current_node.f:
-                current_node = item
-                current_index = index
-
-        open_list.pop(current_index)
-        closed_list.append(current_node)
-
-        if current_node.x == goal_node.x and current_node.y == goal_node.y:
-            path = []
-            while current_node is not None:
-                path.append((chr(current_node.x + ord('a')), current_node.y + 1))
-                current_node = current_node.parent
-            return path[::-1]
-
-        children = []
-        for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]:
-            node_position = (current_node.x + new_position[0], current_node.y + new_position[1])
-
-            if node_position[0] < 0 or node_position[0] >= 8 or node_position[1] < 0 or node_position[1] >= 8:
-                continue
-
-            if not is_valid_move(current_node.x, current_node.y, node_position[0], node_position[1]):
-                continue
-
-            new_node = Node(node_position[0], node_position[1], current_node)
-
-            children.append(new_node)
-
-        for child in children:
-            for closed_child in closed_list:
-                if child.x == closed_child.x and child.y == closed_child.y:
-                    continue
-
-            child.g = current_node.g + 1
-            child.h = ((child.x - goal_node.x) ** 2) + ((child.y - goal_node.y) ** 2)
-            child.f = child.g + child.h
-
-            for open_node in open_list:
-                if child.x == open_node.x and child.y == open_node.y and child.g > open_node.g:
-                    continue
-
-            open_list.append(child)
-
-    return None
-
-# Przykładowe użycie:
-start = "a1"
-goal = "e8"
-droga = astar(start, goal)
-print(droga)
-
-
-
 
 
 def update_board_image(board, label):
@@ -221,6 +134,7 @@ def rooks_to_opposite_site(param):
     global rook_1_last
     global rook_2_last
     global block_direction
+    global black_king_block
     if param == 1:
         if column_or_row(rook_1_last, rook_2_last):
             if rook_1_last[0] == "a":
@@ -282,32 +196,98 @@ def find_opposite_corner(vector):
             return "a8"
 
 
-
+king_path = []
+is_king_path = 0
+king_ooo = []
 
 
 def white_king_to_opposite_corner(legal_moves):
     global black_king_last
     global white_king_last
-    row_distance = (int(white_king_last[1]) - int(black_king_last[1]))
-    column_distance = (ord(white_king_last[0]) - ord(black_king_last[0]))
-    vector = [0, 0]
-    if row_distance > 0:
-        vector[0] = 1
-    elif row_distance < 0:
-        vector[0] = -1
-    elif row_distance == 0:
-        vector[0] = 0
-    if column_distance > 0:
-        vector[1] = 1
-    elif column_distance < 0:
-        vector[1] = -1
-    elif column_distance == 0:
-        vector[1] = 0
+    global king_path
+    global is_king_path
+    global king_ooo
+    a1_white = astar(white_king_last, "a1", [black_king_last])  # , rook_1_last, rook_2_last])
+    a8_white = astar(white_king_last, "a8", [black_king_last])
+    h1_white = astar(white_king_last, "h1", [black_king_last])
+    h8_white = astar(white_king_last, "h8", [black_king_last])
+    a1_black = astar(black_king_last, "a1", [white_king_last])
+    a8_black = astar(black_king_last, "a8", [white_king_last])
+    h1_black = astar(black_king_last, "h1", [white_king_last])
+    h8_black = astar(black_king_last, "h8", [white_king_last])
+    if a1_white < a1_black:
+        king_path = a1_white
+        if rook_1_last != "a1" and rook_2_last != "a1":
+            king_path = astar(white_king_last, "a1", [black_king_last, rook_1_last, rook_2_last])
+            is_king_path = 1
+            return white_king_last + king_path.pop(0)
+    if a8_white < a8_black:
+        king_path = a8_white
+        if rook_1_last != "a8" and rook_2_last != "a8":
+            king_path = astar(white_king_last, "a8", [black_king_last, rook_1_last, rook_2_last])
+            is_king_path = 1
+            return white_king_last + king_path.pop(0)
+    if h1_white < h1_black:
+        king_path = h1_white
+        if rook_1_last != "h1" and rook_2_last != "h1":
+            king_path = astar(white_king_last, "h1", [black_king_last, rook_1_last, rook_2_last])
+            is_king_path = 1
+            return white_king_last + king_path.pop(0)
+    if h8_white < h8_black:
+        king_path = h8_white
+        if rook_1_last != "h8" and rook_2_last != "h8":
+            king_path = astar(white_king_last, "h8", [black_king_last, rook_1_last, rook_2_last])
+            is_king_path = 1
+            return white_king_last + king_path.pop(0)
 
-    return find_opposite_corner(vector)
+    # if len(king_path) == 1:
+    is_king_path = 2
+    if column_or_row(rook_1_last, rook_2_last):
+        king_ooo = [king_path[-1] + king_path[0]]
+        return king_path[-1] + white_king_last[0] + king_path[-1][1]
+    else:
+        king_ooo = [king_path[-1] + king_path[0], king_path[-1] + white_king_last[0] + king_path[-1][1]]
+        return white_king_last + king_path.pop(0)
 
-    print(vector)
-    return "a1a8"
+    # is_king_path = 3
+    # king_path = astar(white_king_last, king_path[-2], [black_king_last, rook_1_last, rook_2_last])
+    # return king_path.pop(0)
+
+    # if rook_1_last != "a1" and rook_2_last != "a1":
+    #     a1 = astar(white_king_last, "a1", [black_king_last, rook_1_last, rook_2_last])
+    # else:
+    #     if column_or_row(rook_1_last, rook_2_last):
+    #         king_path = a1
+    #         is_king_path = 2
+    #         a1 = a1[1:]
+    #         return a1[0]
+    #
+    # if rook_1_last != "a8" and rook_2_last != "a8":
+    #     a8 = astar(white_king_last, "a8", [black_king_last, rook_1_last, rook_2_last])
+    # if rook_1_last != "h1" and rook_2_last != "h1":
+    #     h1 = astar(white_king_last, "h1", [black_king_last, rook_1_last, rook_2_last])
+    # if rook_1_last != "h8" and rook_2_last != "h8":
+    #     h8 = astar(white_king_last, "h8", [black_king_last, rook_1_last, rook_2_last])
+    # row_distance = (int(white_king_last[1]) - int(black_king_last[1]))
+    # column_distance = (ord(white_king_last[0]) - ord(black_king_last[0]))
+    # vector = [0, 0]
+    # if row_distance > 0:
+    #     vector[0] = 1
+    # elif row_distance < 0:
+    #     vector[0] = -1
+    # elif row_distance == 0:
+    #     vector[0] = 0
+    # if column_distance > 0:
+    #     vector[1] = 1
+    # elif column_distance < 0:
+    #     vector[1] = -1
+    # elif column_distance == 0:
+    #     vector[1] = 0
+    #
+    # return find_opposite_corner(vector)
+    #
+    # print(vector)
+    # return "a1a8"
 
 
 # def is_rook_on_site(rook_2_last):
@@ -321,6 +301,9 @@ def move_rook(rook1_danger, rook2_danger, legal_moves):
     global rook_1_last
     global rook_2_last
     global white_king_last
+    global king_path
+    global is_king_path
+    global black_king_block
     # if rook1_danger == 1 or rook2_danger == 1:
 
     # elif (rook_2_last+rook_1_last[0]+rook_2_last[1]) in legal_moves:
@@ -329,7 +312,32 @@ def move_rook(rook1_danger, rook2_danger, legal_moves):
     #     return chess.Move.from_uci(rook_2_last+rook_2_last[0]+rook_1_last[1])
     # elif rook1_danger == 1:
     # else:
-    if (black_king_block == 1):
+    if is_king_path == 1:
+        if king_path:
+            square = king_path[0]
+            if len(king_path) == 1:
+                is_king_path = 0
+                king_path = []
+                return square
+            king_path = king_path[1:]
+            return square
+        else:
+            is_king_path = 0
+    elif is_king_path == 2:
+        if king_path:
+            square = king_path[0]
+            if len(king_path) == 1:
+                is_king_path = 0
+                king_path = []
+                return square
+            king_path = king_path[1:]
+            return square
+        else:
+            if len(king_ooo) == 1:
+                is_king_path = 0
+            return king_ooo.pop(0)
+
+    if black_king_block == 1:
         return rooks_to_opposite_site(2)
 
     if (rook_1_last[0] == rook_2_last[0] and rook_1_last[0] == white_king_last[0]) and not are_rooks_neighbours(
