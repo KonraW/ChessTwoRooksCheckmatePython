@@ -96,7 +96,7 @@ goal = "e8"
 obstacles = [('c', 3), ("b", 8)]  # Przeszkody w postaci listy krotek (x, y)
 
 droga = astar(start, goal, obstacles)
-print(droga)
+# print(droga)
 
 
 def update_board_image(board, label):
@@ -217,44 +217,77 @@ def white_king_to_opposite_corner(legal_moves):
     h1_black = astar(black_king_last, "h1", [white_king_last])
     h8_black = astar(black_king_last, "h8", [white_king_last])
     if len(a1_white) < len(a1_black):
-        king_path = a1_white
+        king_path = astar(white_king_last, "b2", [black_king_last])
+        king_path.append("a1")
         if rook_1_last != "a1" and rook_2_last != "a1":
             king_path = astar(white_king_last, "a1", [black_king_last, rook_1_last, rook_2_last])
             is_king_path = 1
-            print(king_path)
+            print(rook_1_last, rook_2_last)
+            # print(king_path)
             return white_king_last + king_path.pop(0)
     if len(a8_white) < len(a8_black):
-        king_path = a8_white
+        king_path = astar(white_king_last, "b7", [black_king_last])
+        king_path.append("a8")
         if rook_1_last != "a8" and rook_2_last != "a8":
             king_path = astar(white_king_last, "a8", [black_king_last, rook_1_last, rook_2_last])
             is_king_path = 1
-            print(king_path)
+            print(rook_1_last, rook_2_last)
+            # print(king_path)
             return white_king_last + king_path.pop(0)
     print(h1_white, h1_black)
     if len(h1_white) < len(h1_black):
-        king_path = h1_white
+        king_path = astar(white_king_last, "g2", [black_king_last])
+        king_path.append("h1")
         if rook_1_last != "h1" and rook_2_last != "h1":
             king_path = astar(white_king_last, "h1", [black_king_last, rook_1_last, rook_2_last])
             is_king_path = 1
-            print(king_path)
+            print(rook_1_last, rook_2_last)
+            # print(king_path)
             return white_king_last + king_path.pop(0)
     if len(h8_white) < len(h8_black):
-        king_path = h8_white
+        king_path = astar(white_king_last, "g7", [black_king_last])
+        king_path.append("h8")
         if rook_1_last != "h8" and rook_2_last != "h8":
             king_path = astar(white_king_last, "h8", [black_king_last, rook_1_last, rook_2_last])
             is_king_path = 1
-            print(king_path)
+            print(rook_1_last, rook_2_last)
+            # print(king_path)
             return white_king_last + king_path.pop(0)
 
     # if len(king_path) == 1:
     is_king_path = 2
     if column_or_row(rook_1_last, rook_2_last):
-        king_ooo = [king_path[-1] + king_path[0]]
-        return king_path[-1] + white_king_last[0] + king_path[-1][1]
+        # king_ooo=[]
+        # for i in len(1, king_path):
+        #     if len(king_ooo)>i:
+        #         king_ooo.append(king_path[i] + king_path[i+1])
+        # king_ooo = [king_path[-1] + king_path[-2][0]+king_path[-1][1], king_path[-2]+king_path[-1]]
+        # king_path.pop(0)
+        # return king_path[-1] + white_king_last[0] + king_path[-1][1]
+        if len(king_path) > 1:
+            king_ooo = [king_path[-1] + king_path[-2][0] + king_path[-1][1], king_path[-2] + king_path[-1]]
+            print(king_path)
+            king_path=king_path[:-1]
+            return white_king_last + king_path.pop(0)
+        else:
+            king_ooo = [king_path[-1] + white_king_last[0] + king_path[-1][1], white_king_last + king_path[-1]]
+            king_path.pop(0)
+            print(king_path)
+            return king_ooo.pop(0)
     else:
-        print(king_path)
-        king_ooo = [king_path[-1] + king_path[0], king_path[-1] + white_king_last[0] + king_path[-1][1]]
-        return white_king_last + king_path.pop(0)
+        # print(king_path)
+        # king_ooo = [king_path[-1] + king_path[0], king_path[-1] + white_king_last[0] + king_path[-1][1]]
+        # return white_king_last + king_path.pop(0)
+        if len(king_path) > 1:
+            king_ooo = [king_path[-1] + king_path[-1][0] + king_path[-2][1], king_path[-2] + king_path[-1]]
+            print(king_path)
+            king_path=king_path[:-1]
+            return white_king_last + king_path.pop(0)
+        else:
+            king_ooo = [king_path[-1] + king_path[-1][0] + white_king_last[1], white_king_last + king_path[-1]]
+            king_path.pop(0)
+            print(king_path)
+            return king_ooo.pop(0)
 
     # is_king_path = 3
     # king_path = astar(white_king_last, king_path[-2], [black_king_last, rook_1_last, rook_2_last])
@@ -311,16 +344,16 @@ def start_checkmate(legal_moves):
         for row in rows:
             if not under_attack(rook_1_last, rook_2_last, row):
                 if attack_column_or_row == 1:
-                    return rook_1_last + row + rook_1_last[1]
-                else:
                     return rook_1_last + rook_1_last[0] + row
+                else:
+                    return rook_1_last + row + rook_1_last[1]
     if chess.square_distance(chess.parse_square(black_king_last), chess.parse_square(rook_2_last)) == 1:
         for row in rows:
             if not under_attack(rook_1_last, rook_2_last, row):
                 if attack_column_or_row == 1:
-                    return rook_2_last + row + rook_2_last[1]
-                else:
                     return rook_2_last + rook_2_last[0] + row
+                else:
+                    return rook_2_last + row + rook_2_last[1]
 
     if attack_column_or_row == 1:
         if rook_1_last[1] < rook_2_last[1]:
@@ -338,24 +371,25 @@ is_start_checkmate = False
 rows = []
 attack_column_or_row = 0
 attack_direction = 0
+is_start_king_move = False
 
 
 def under_attack(rook_1_last, rook_2_last, row):
     global attack_column_or_row
     if attack_column_or_row == 0:
-        if chess.square_distance(chess.parse_square(row+rook_1_last[1]), chess.parse_square(black_king_last)) == 1:
+        if chess.square_distance(chess.parse_square(row + rook_1_last[1]), chess.parse_square(black_king_last)) == 1:
             return True
-        if chess.square_distance(chess.parse_square(row+rook_2_last[1]), chess.parse_square(black_king_last)) == 1:
+        if chess.square_distance(chess.parse_square(row + rook_2_last[1]), chess.parse_square(black_king_last)) == 1:
             return True
     else:
-        if chess.square_distance(chess.parse_square(rook_1_last[0]+row), chess.parse_square(black_king_last)) == 1:
+        if chess.square_distance(chess.parse_square(rook_1_last[0] + row), chess.parse_square(black_king_last)) == 1:
             return True
-        if chess.square_distance(chess.parse_square(rook_2_last[0]+row), chess.parse_square(black_king_last)) == 1:
+        if chess.square_distance(chess.parse_square(rook_2_last[0] + row), chess.parse_square(black_king_last)) == 1:
             return True
 
 
 def move_rook(rook1_danger, rook2_danger, legal_moves):
-    print("halskdflasj")
+    # print("halo?")
     global rook_1_last
     global rook_2_last
     global white_king_last
@@ -367,6 +401,7 @@ def move_rook(rook1_danger, rook2_danger, legal_moves):
     global rows
     global king_ooo
     global attack_direction
+    global is_start_king_move
     # if rook1_danger == 1 or rook2_danger == 1:
 
     # elif (rook_2_last+rook_1_last[0]+rook_2_last[1]) in legal_moves:
@@ -388,21 +423,23 @@ def move_rook(rook1_danger, rook2_danger, legal_moves):
             is_king_path = 0
     elif is_king_path == 2:
         if king_path:
+            print(king_path, "path")
             square = king_path[0]
             if len(king_path) == 1:
                 is_king_path = 0
                 king_path = []
-                return square
+                return white_king_last + square
             king_path = king_path[1:]
             return white_king_last + square
         else:
+            print(king_ooo, "oooo")
             if len(king_ooo) == 1:
                 is_king_path = 0
             return king_ooo.pop(0)
 
     if black_king_block == 1:
         return rooks_to_opposite_site(2)
-    if not is_start_checkmate:
+    if not is_start_king_move:
         if (rook_1_last[0] == rook_2_last[0] and rook_1_last[0] == white_king_last[0]) and not are_rooks_neighbours(
                 rook_1_last, rook_2_last):
             return random_king_move(legal_moves, 0)
@@ -414,10 +451,12 @@ def move_rook(rook1_danger, rook2_danger, legal_moves):
             # print(legal_moves, rook_1_last, rook_2_last, white_king_last)
             # move = chess.Move.from_uci("a1a8")
             # if (chess.Move.from_uci(rook_1_last + rook_1_last[0] + rook_2_last[1])) in legal_moves:
-            #     print("halopoo")
-            if (chess.Move.from_uci(rook_1_last + rook_1_last[0] + rook_2_last[1])) in legal_moves and white_king_last[0] != rook_1_last[0]:
+            #     print("halo")
+            if (chess.Move.from_uci(rook_1_last + rook_1_last[0] + rook_2_last[1])) in legal_moves and white_king_last[
+                0] != rook_1_last[0]:
                 return rook_1_last + rook_1_last[0] + rook_2_last[1]
-            elif (chess.Move.from_uci(rook_1_last + rook_2_last[0] + rook_1_last[1])) in legal_moves and white_king_last[1] != rook_1_last[1]:
+            elif (chess.Move.from_uci(rook_1_last + rook_2_last[0] + rook_1_last[1])) in legal_moves and \
+                    white_king_last[1] != rook_1_last[1]:
                 return rook_1_last + rook_2_last[0] + rook_1_last[1]
             else:
                 return print("No legal moves available.")
@@ -444,6 +483,7 @@ def move_rook(rook1_danger, rook2_danger, legal_moves):
                 else:
                     return rook_1_last + chr(ord(rook_2_last[0]) + 1) + rook_1_last[1]
         elif are_rooks_neighbours(rook_1_last, rook_2_last) and not is_king_in_opposite_corner(white_king_last):
+            is_start_king_move = True
             return white_king_to_opposite_corner(legal_moves)
         elif not is_start_checkmate:
             is_start_checkmate = True
@@ -610,7 +650,7 @@ while not board.is_game_over():
         # legal_moves = list(board.legal_moves)
 
     root.update()  # GUI update !!!!
-    time.sleep(1)
+    time.sleep(0.5)
 
 print("Game Over")
 # move_black_king_randomly(board, label)
