@@ -96,6 +96,8 @@ goal = "e8"
 obstacles = [('c', 3), ("b", 8)]  # Przeszkody w postaci listy krotek (x, y)
 
 droga = astar(start, goal, obstacles)
+
+
 # print(droga)
 
 
@@ -200,6 +202,7 @@ def find_opposite_corner(vector):
 king_path = []
 is_king_path = 0
 king_ooo = []
+bad_corner = False
 
 
 def white_king_to_opposite_corner(legal_moves):
@@ -208,6 +211,7 @@ def white_king_to_opposite_corner(legal_moves):
     global king_path
     global is_king_path
     global king_ooo
+    global bad_corner
     a1_white = astar(white_king_last, "a1", [black_king_last])  # , rook_1_last, rook_2_last])
     a8_white = astar(white_king_last, "a8", [black_king_last])
     h1_white = astar(white_king_last, "h1", [black_king_last])
@@ -256,6 +260,7 @@ def white_king_to_opposite_corner(legal_moves):
 
     # if len(king_path) == 1:
     is_king_path = 2
+    bad_corner = True
     if column_or_row(rook_1_last, rook_2_last):
         # king_ooo=[]
         # for i in len(1, king_path):
@@ -267,7 +272,7 @@ def white_king_to_opposite_corner(legal_moves):
         if len(king_path) > 1:
             king_ooo = [king_path[-1] + king_path[-2][0] + king_path[-1][1], king_path[-2] + king_path[-1]]
             print(king_path)
-            king_path=king_path[:-1]
+            king_path = king_path[:-1]
             return white_king_last + king_path.pop(0)
         else:
             king_ooo = [king_path[-1] + white_king_last[0] + king_path[-1][1], white_king_last + king_path[-1]]
@@ -281,7 +286,7 @@ def white_king_to_opposite_corner(legal_moves):
         if len(king_path) > 1:
             king_ooo = [king_path[-1] + king_path[-1][0] + king_path[-2][1], king_path[-2] + king_path[-1]]
             print(king_path)
-            king_path=king_path[:-1]
+            king_path = king_path[:-1]
             return white_king_last + king_path.pop(0)
         else:
             king_ooo = [king_path[-1] + king_path[-1][0] + white_king_last[1], white_king_last + king_path[-1]]
@@ -402,6 +407,7 @@ def move_rook(rook1_danger, rook2_danger, legal_moves):
     global king_ooo
     global attack_direction
     global is_start_king_move
+    global bad_corner
     # if rook1_danger == 1 or rook2_danger == 1:
 
     # elif (rook_2_last+rook_1_last[0]+rook_2_last[1]) in legal_moves:
@@ -482,32 +488,43 @@ def move_rook(rook1_danger, rook2_danger, legal_moves):
                     return rook_1_last + chr(ord(rook_2_last[0]) - 1) + rook_1_last[1]
                 else:
                     return rook_1_last + chr(ord(rook_2_last[0]) + 1) + rook_1_last[1]
-        elif are_rooks_neighbours(rook_1_last, rook_2_last) and not is_king_in_opposite_corner(white_king_last):
+        if not column_or_row(rook_1_last, rook_2_last):
+            attack_column_or_row = 1
+        if are_rooks_neighbours(rook_1_last, rook_2_last) and not is_king_in_opposite_corner(white_king_last):
             is_start_king_move = True
             return white_king_to_opposite_corner(legal_moves)
-        elif not is_start_checkmate:
-            is_start_checkmate = True
-            if column_or_row(rook_1_last, rook_2_last):
-                if black_king_last[1] > rook_1_last[1]:
-                    attack_direction = 1
-                if white_king_last[0] == "a":
-                    rows = ["b", "c", "g", "h"]
-                    for row in rows:
-                        if not under_attack(rook_1_last, rook_2_last, row):
-                            if rook_1_last[1] > rook_2_last[1] and attack_direction == 1:
+    if not is_start_checkmate:
+        is_start_checkmate = True
+        if column_or_row(rook_1_last, rook_2_last):
+            if black_king_last[1] > rook_1_last[1]:
+                attack_direction = 1
+            if white_king_last[0] == "a":
+                rows = ["b", "c", "g", "h"]
+            else:
+                rows = ["a", "b", "f", "g"]
+            if not bad_corner:
+                bad_corner = True
+                for row in rows:
+                    if not under_attack(rook_1_last, rook_2_last, row):
+                        if rook_1_last[1] > rook_2_last[1]:
+                            if attack_direction == 1:
                                 return rook_1_last + row + rook_1_last[1]
                             else:
                                 return rook_2_last + row + rook_2_last[1]
-                else:
-                    rows = ["a", "b", "f", "g"]
+                        else:
+                            if attack_direction == 1:
+                                return rook_2_last + row + rook_2_last[1]
+                            else:
+                                return rook_1_last + row + rook_1_last[1]
+        else:
+            if black_king_last[0] > rook_1_last[0]:
+                attack_direction = 1
+            if white_king_last[1] == "1":
+                rows = ["2", "3", "7", "8"]
             else:
-                if black_king_last[0] > rook_1_last[0]:
-                    attack_direction = 1
-                attack_column_or_row = 1
-                if white_king_last[1] == "1":
-                    rows = ["2", "3", "7", "8"]
-                else:
-                    rows = ["1", "2", "6", "7"]
+                rows = ["1", "2", "6", "7"]
+            if not bad_corner:
+                bad_corner = True
                 for row in rows:
                     if not under_attack(rook_1_last, rook_2_last, row):
                         if rook_1_last[0] > rook_2_last[0]:
@@ -520,7 +537,7 @@ def move_rook(rook1_danger, rook2_danger, legal_moves):
                                 return rook_2_last + rook_2_last[0] + row
                             else:
                                 return rook_1_last + rook_1_last[0] + row
-    else:
+    if bad_corner:
         return start_checkmate(legal_moves)
     return "a1a8"
     # if not is_king_in_opposite_corner(white_king_last):
