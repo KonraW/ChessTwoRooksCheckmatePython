@@ -343,37 +343,117 @@ def white_king_to_opposite_corner(legal_moves):
 
 def start_checkmate(legal_moves):
     global rows
+    global columns
     global attack_column_or_row
     "halo?"
     if chess.square_distance(chess.parse_square(black_king_last), chess.parse_square(rook_1_last)) == 1:
-        for row in rows:
-            if not under_attack(rook_1_last, rook_2_last, row):
-                if attack_column_or_row == 1:
-                    return rook_1_last + rook_1_last[0] + row
-                else:
-                    return rook_1_last + row + rook_1_last[1]
+        if not column_or_row(rook_1_last, rook_2_last):
+            tmp_list1 = ["a", "b", "c"]
+            tmp_list2 = ["f", "g", "h"]
+            if rook_1_last[0] in tmp_list1:
+                for i in tmp_list2:
+                    if rook_2_last[0] != i:
+                        return rook_1_last + i + rook_1_last[1]
+            elif rook_1_last[0] in tmp_list2:
+                for i in tmp_list1:
+                    if rook_2_last[0] != i:
+                        return rook_1_last + i + rook_1_last[1]
+            else:
+                for i in ["b", "g"]:
+                    if rook_2_last[0] != i:
+                        return rook_1_last + i + rook_1_last[1]
+        else:
+            tmp_list1 = ["1", "2", "3"]
+            tmp_list2 = ["6", "7", "8"]
+            if rook_1_last[1] in tmp_list1:
+                for i in tmp_list2:
+                    if rook_2_last[1] != i:
+                        return rook_1_last + rook_1_last[0] + i
+            elif rook_1_last[1] in tmp_list2:
+                for i in tmp_list1:
+                    if rook_2_last[1] != i:
+                        return rook_1_last + rook_1_last[0] + i
+            else:
+                for i in ["2", "7"]:
+                    if rook_2_last[1] != i:
+                        return rook_1_last + rook_1_last[0] + i
+        # for row in rows:
+        #     if not under_attack(rook_1_last, rook_2_last, row):
+        #         if attack_column_or_row == 1:
+        #             return rook_1_last + rook_1_last[0] + row
+        #         else:
+        #             return rook_1_last + row + rook_1_last[1]
     if chess.square_distance(chess.parse_square(black_king_last), chess.parse_square(rook_2_last)) == 1:
-        for row in rows:
-            if not under_attack(rook_1_last, rook_2_last, row):
-                if attack_column_or_row == 1:
-                    return rook_2_last + rook_2_last[0] + row
-                else:
-                    return rook_2_last + row + rook_2_last[1]
+        if not column_or_row(rook_1_last, rook_2_last):
+            tmp_list1 = ["a", "b", "c"]
+            tmp_list2 = ["f", "g", "h"]
+            if rook_2_last[0] in tmp_list1:
+                for i in tmp_list2:
+                    if rook_1_last[0] != i:
+                        return rook_2_last + i + rook_2_last[1]
+            elif rook_2_last[0] in tmp_list2:
+                for i in tmp_list1:
+                    if rook_1_last[0] != i:
+                        return rook_2_last + i + rook_2_last[1]
+            else:
+                for i in ["b", "g"]:
+                    if rook_1_last[0] != i:
+                        return rook_2_last + i + rook_2_last[1]
+        else:
+            tmp_list1 = ["1", "2", "3"]
+            tmp_list2 = ["6", "7", "8"]
+            if rook_2_last[1] in tmp_list1:
+                for i in tmp_list2:
+                    if rook_1_last[1] != i:
+                        return rook_2_last + rook_2_last[0] + i
+            elif rook_2_last[1] in tmp_list2:
+                for i in tmp_list1:
+                    if rook_1_last[1] != i:
+                        return rook_2_last + rook_2_last[0] + i
+            else:
+                for i in ["2", "7"]:
+                    if rook_1_last[1] != i:
+                        return rook_2_last + rook_2_last[0] + i
+        # for row in rows:
+        #     if not under_attack(rook_1_last, rook_2_last, row):
+        #         if attack_column_or_row == 1:
+        #             return rook_2_last + rook_2_last[0] + row
+        #         else:
+        #             return rook_2_last + row + rook_2_last[1]
 
     if attack_column_or_row == 1:
         if rook_1_last[1] < rook_2_last[1]:
+            if chess.square_distance(chess.parse_square(rook_1_last[0] + str(int(rook_1_last[1]) + 2)), chess.parse_square(black_king_last)) == 1:
+                for row in columns:
+                    if not under_attack2(rook_1_last, rook_2_last, row) and row != rook_1_last[1] and row != rook_2_last[1]:
+                        return rook_1_last + row+rook_1_last[1]
+
             return rook_1_last + rook_1_last[0] + str(int(rook_1_last[1]) + 2)
         else:
+            if chess.square_distance(chess.parse_square(rook_2_last[0] + str(int(rook_2_last[1]) + 2)), chess.parse_square(black_king_last)) == 1:
+                for row in columns:
+                    if not under_attack2(rook_1_last, rook_2_last, row) and row != rook_1_last[1] and row != rook_2_last[1]:
+                        return rook_2_last + row+rook_2_last[1]
             return rook_2_last + rook_2_last[0] + str(int(rook_2_last[1]) + 2)
     else:
         if rook_1_last[0] < rook_2_last[0]:
+            if chess.square_distance(chess.parse_square(chr(ord(rook_1_last[0]) + 2) + rook_1_last[1]),chess.parse_square(black_king_last)) == 1:
+                for row in columns:
+                    if not under_attack2(rook_1_last, rook_2_last, row) and row != rook_1_last[0] and row != rook_2_last[0]:
+                        return rook_1_last + row + rook_1_last[1]
             return rook_1_last + chr(ord(rook_1_last[0]) + 2) + rook_1_last[1]
         else:
+            if chess.square_distance(chess.parse_square(chr(ord(rook_2_last[0]) + 2) + rook_2_last[1]), chess.parse_square(
+                    black_king_last)) == 1:
+                for row in columns:
+                    if not under_attack2(rook_1_last, rook_2_last, row) and row != rook_1_last[0] and row != rook_2_last[0]:
+                        return rook_2_last + row + rook_2_last[1]
             return rook_2_last + chr(ord(rook_2_last[0]) + 2) + rook_2_last[1]
 
 
 is_start_checkmate = False
 rows = []
+columns = []
 attack_column_or_row = 0
 attack_direction = 0
 is_start_king_move = False
@@ -382,6 +462,19 @@ is_start_king_move = False
 def under_attack(rook_1_last, rook_2_last, row):
     global attack_column_or_row
     if attack_column_or_row == 0:
+        if chess.square_distance(chess.parse_square(row + rook_1_last[1]), chess.parse_square(black_king_last)) == 1:
+            return True
+        if chess.square_distance(chess.parse_square(row + rook_2_last[1]), chess.parse_square(black_king_last)) == 1:
+            return True
+    else:
+        if chess.square_distance(chess.parse_square(rook_1_last[0] + row), chess.parse_square(black_king_last)) == 1:
+            return True
+        if chess.square_distance(chess.parse_square(rook_2_last[0] + row), chess.parse_square(black_king_last)) == 1:
+            return True
+
+def under_attack2(rook_1_last, rook_2_last, row):
+    global attack_column_or_row
+    if attack_column_or_row == 1:
         if chess.square_distance(chess.parse_square(row + rook_1_last[1]), chess.parse_square(black_king_last)) == 1:
             return True
         if chess.square_distance(chess.parse_square(row + rook_2_last[1]), chess.parse_square(black_king_last)) == 1:
@@ -408,6 +501,7 @@ def move_rook(rook1_danger, rook2_danger, legal_moves):
     global attack_direction
     global is_start_king_move
     global bad_corner
+    global columns
     # if rook1_danger == 1 or rook2_danger == 1:
 
     # elif (rook_2_last+rook_1_last[0]+rook_2_last[1]) in legal_moves:
@@ -498,6 +592,10 @@ def move_rook(rook1_danger, rook2_danger, legal_moves):
         if column_or_row(rook_1_last, rook_2_last):
             if black_king_last[1] > rook_1_last[1]:
                 attack_direction = 1
+            if white_king_last[0] == 1:
+                colums = ["2", "3", "7", "8"]
+            else:
+                colums = ["1", "2", "6", "7"]
             if white_king_last[0] == "a":
                 rows = ["b", "c", "g", "h"]
             else:
@@ -519,6 +617,10 @@ def move_rook(rook1_danger, rook2_danger, legal_moves):
         else:
             if black_king_last[0] > rook_1_last[0]:
                 attack_direction = 1
+            if white_king_last[1] == "a":
+                columns = ["b", "c", "g", "h"]
+            else:
+                columns = ["a", "b", "f", "g"]
             if white_king_last[1] == "1":
                 rows = ["2", "3", "7", "8"]
             else:
