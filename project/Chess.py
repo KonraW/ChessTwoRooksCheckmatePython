@@ -228,7 +228,10 @@ def white_king_to_opposite_corner(legal_moves):
             is_king_path = 1
             print(rook_1_last, rook_2_last)
             # print(king_path)
-            return white_king_last + king_path.pop(0)
+            if chess.Move.from_uci(white_king_last + king_path[0]) in legal_moves:
+                return white_king_last + king_path.pop(0)
+            else:
+                return move_to_other_corner()
     if len(a8_white) - 1 < len(a8_black):
         king_path = astar(white_king_last, "b7", [black_king_last])
         king_path.append("a8")
@@ -237,7 +240,10 @@ def white_king_to_opposite_corner(legal_moves):
             is_king_path = 1
             print(rook_1_last, rook_2_last)
             # print(king_path)
-            return white_king_last + king_path.pop(0)
+            if chess.Move.from_uci(white_king_last + king_path[0]) in legal_moves:
+                return white_king_last + king_path.pop(0)
+            else:
+                return move_to_other_corner()
     print(h1_white, h1_black)
     if len(h1_white) - 1 < len(h1_black):
         king_path = astar(white_king_last, "g2", [black_king_last])
@@ -247,7 +253,10 @@ def white_king_to_opposite_corner(legal_moves):
             is_king_path = 1
             print(rook_1_last, rook_2_last)
             # print(king_path)
-            return white_king_last + king_path.pop(0)
+            if chess.Move.from_uci(white_king_last + king_path[0]) in legal_moves:
+                return white_king_last + king_path.pop(0)
+            else:
+                return move_to_other_corner()
     if len(h8_white) - 1 < len(h8_black):
         king_path = astar(white_king_last, "g7", [black_king_last])
         king_path.append("h8")
@@ -256,7 +265,10 @@ def white_king_to_opposite_corner(legal_moves):
             is_king_path = 1
             print(rook_1_last, rook_2_last)
             # print(king_path)
-            return white_king_last + king_path.pop(0)
+            if chess.Move.from_uci(white_king_last + king_path[0]) in legal_moves:
+                return white_king_last + king_path.pop(0)
+            else:
+                return move_to_other_corner()
 
     # if len(king_path) == 1:
     is_king_path = 2
@@ -273,11 +285,15 @@ def white_king_to_opposite_corner(legal_moves):
             king_ooo = [king_path[-1] + king_path[-2][0] + king_path[-1][1], king_path[-2] + king_path[-1]]
             print(king_path)
             king_path = king_path[:-1]
-            return white_king_last + king_path.pop(0)
+            if chess.Move.from_uci(white_king_last + king_path[0]) in legal_moves:
+                return white_king_last + king_path.pop(0)
+            else:
+                return move_to_other_corner()
         else:
             king_ooo = [king_path[-1] + white_king_last[0] + king_path[-1][1], white_king_last + king_path[-1]]
             king_path.pop(0)
             print(king_path)
+
             return king_ooo.pop(0)
     else:
         # print(king_path)
@@ -287,7 +303,10 @@ def white_king_to_opposite_corner(legal_moves):
             king_ooo = [king_path[-1] + king_path[-1][0] + king_path[-2][1], king_path[-2] + king_path[-1]]
             print(king_path)
             king_path = king_path[:-1]
-            return white_king_last + king_path.pop(0)
+            if chess.Move.from_uci(white_king_last + king_path[0]) in legal_moves:
+                return white_king_last + king_path.pop(0)
+            else:
+                return move_to_other_corner()
         else:
             king_ooo = [king_path[-1] + king_path[-1][0] + white_king_last[1], white_king_last + king_path[-1]]
             king_path.pop(0)
@@ -428,7 +447,7 @@ def start_checkmate(legal_moves):
             if rook_1_last[1] < rook_2_last[1]:
                 if chess.square_distance(chess.parse_square(rook_1_last[0] + str(int(rook_2_last[1]) + 1)),
                                          chess.parse_square(black_king_last)) == 1 or rook_1_last + rook_1_last[0] + str(int(rook_2_last[1]) + 1)==white_king_last:
-                    for row in columns:
+                    for row in rows:
                         if not under_attack2(rook_1_last, rook_2_last, row) and row != rook_1_last[0] and row != \
                                 rook_2_last[0]:
                             # if attack_column_or_row == 0:
@@ -439,7 +458,7 @@ def start_checkmate(legal_moves):
             else:
                 if chess.square_distance(chess.parse_square(rook_2_last[0] + str(int(rook_1_last[1]) + 1)),
                                          chess.parse_square(black_king_last)) == 1 or rook_2_last + rook_2_last[0] + str(int(rook_1_last[1]) + 1)==white_king_last:
-                    for row in columns:
+                    for row in rows:
                         if not under_attack2(rook_1_last, rook_2_last, row) and row != rook_1_last[0] and row != \
                                 rook_2_last[0]:
                             # if attack_column_or_row == 0:
@@ -450,7 +469,7 @@ def start_checkmate(legal_moves):
             if rook_1_last[0] < rook_2_last[0]:
                 if chess.square_distance(chess.parse_square(chr(ord(rook_2_last[0]) + 1) + rook_1_last[1]),
                                          chess.parse_square(black_king_last)) == 1 or rook_1_last + chr(ord(rook_2_last[0]) + 1) + rook_1_last[1]==white_king_last:
-                    for row in columns:
+                    for row in rows:
                         if not under_attack2(rook_1_last, rook_2_last, row) and row != rook_1_last[1] and row != \
                                 rook_2_last[1]:
                             # if attack_column_or_row == 0:
@@ -461,7 +480,7 @@ def start_checkmate(legal_moves):
                 if chess.square_distance(chess.parse_square(chr(ord(rook_1_last[0]) + 1) + rook_2_last[1]),
                                          chess.parse_square(
                                              black_king_last)) == 0 or rook_2_last + chr(ord(rook_1_last[0]) + 1) + rook_2_last[1]==white_king_last:
-                    for row in columns:
+                    for row in rows:
                         if not under_attack2(rook_1_last, rook_2_last, row) and row != rook_1_last[1] and row != \
                                 rook_2_last[1]:
                             # if attack_column_or_row == 1:
@@ -473,7 +492,7 @@ def start_checkmate(legal_moves):
             if rook_1_last[1] > rook_2_last[1]:
                 if chess.square_distance(chess.parse_square(rook_1_last[0] + str(int(rook_2_last[1]) - 1)),
                                          chess.parse_square(black_king_last)) == 1 or rook_1_last + rook_1_last[0] + str(int(rook_2_last[1]) - 1)==white_king_last:
-                    for row in columns:
+                    for row in rows:
                         if not under_attack2(rook_1_last, rook_2_last, row) and row != rook_1_last[0] and row != \
                                 rook_2_last[0]:
                             # if attack_column_or_row == 0:
@@ -483,7 +502,7 @@ def start_checkmate(legal_moves):
             else:
                 if chess.square_distance(chess.parse_square(rook_2_last[0] + str(int(rook_1_last[1]) - 1)),
                                          chess.parse_square(black_king_last)) == 1 or rook_2_last + rook_2_last[0] + str(int(rook_1_last[1]) - 1)==white_king_last:
-                    for row in columns:
+                    for row in rows:
                         if not under_attack2(rook_1_last, rook_2_last, row) and row != rook_1_last[0] and row != \
                                 rook_2_last[0]:
                             # if attack_column_or_row == 0:
@@ -494,7 +513,7 @@ def start_checkmate(legal_moves):
             if rook_1_last[0] > rook_2_last[0]:
                 if chess.square_distance(chess.parse_square(chr(ord(rook_2_last[0]) - 1) + rook_1_last[1]),
                                          chess.parse_square(black_king_last)) == 1 or rook_1_last + chr(ord(rook_2_last[0]) - 1) + rook_1_last[1] == white_king_last:
-                    for row in columns:
+                    for row in rows:
                         if not under_attack2(rook_1_last, rook_2_last, row) and row != rook_1_last[1] and row != \
                                 rook_2_last[1]:
                             # if attack_column_or_row == 0:
@@ -504,7 +523,7 @@ def start_checkmate(legal_moves):
             else:
                 if chess.square_distance(chess.parse_square(chr(ord(rook_1_last[0]) - 1) + rook_2_last[1]),
                                          chess.parse_square(black_king_last)) == 1 or rook_2_last + chr(ord(rook_1_last[0]) - 1) + rook_2_last[1] == white_king_last:
-                    for row in columns:
+                    for row in rows:
                         if not under_attack2(rook_1_last, rook_2_last, row) and row != rook_1_last[1] and row != \
                                 rook_2_last[1]:
                             # if attack_column_or_row == 1:
@@ -549,6 +568,22 @@ def under_attack2(rook_1_last, rook_2_last, row):
             return True
 
 
+def move_to_other_corner():
+    global white_king_last
+    global king_path
+    global is_king_path
+    if white_king_last == "a2" or white_king_last == "h7":
+        king_path = astar(white_king_last, "a8", [black_king_last])
+    elif white_king_last == "h2" or white_king_last == "b8":
+        king_path = astar(white_king_last, "h8", [black_king_last])
+    elif white_king_last == "a7" or white_king_last == "g1":
+        king_path = astar(white_king_last, "a1", [black_king_last])
+    elif white_king_last == "h7" or white_king_last == "b1":
+        king_path = astar(white_king_last, "h1", [black_king_last])
+    is_king_path = 1
+    return white_king_last + king_path.pop(0)
+
+
 def move_rook(rook1_danger, rook2_danger, legal_moves):
     # print("halo?")
     global rook_1_last
@@ -581,7 +616,10 @@ def move_rook(rook1_danger, rook2_danger, legal_moves):
                 king_path = []
                 return white_king_last + square
             king_path = king_path[1:]
-            return white_king_last + square
+            if chess.Move.from_uci(white_king_last + square) in legal_moves:
+                return white_king_last + square
+            else:
+                return move_to_other_corner()
         else:
             is_king_path = 0
     elif is_king_path == 2:
@@ -593,7 +631,11 @@ def move_rook(rook1_danger, rook2_danger, legal_moves):
                 king_path = []
                 return white_king_last + square
             king_path = king_path[1:]
-            return white_king_last + square
+            #if white_king_last+square in legal_moves:
+            if chess.Move.from_uci(white_king_last + square) in legal_moves:
+                return white_king_last + square
+            else:
+                return move_to_other_corner()
         else:
             print(king_ooo, "oooo")
             if len(king_ooo) == 1:
@@ -652,8 +694,8 @@ def move_rook(rook1_danger, rook2_danger, legal_moves):
             return white_king_to_opposite_corner(legal_moves)
     if not is_start_checkmate:
         is_start_checkmate = True
-        if column_or_row(rook_1_last, rook_2_last):
-            if black_king_last[1] > rook_1_last[1]:
+        if attack_column_or_row == 1:
+            if black_king_last[1] < rook_1_last[1]:
                 attack_direction = 1
             if white_king_last[1] == 1:
                 columns = ["2", "3", "8", "7"]
@@ -772,6 +814,7 @@ def move_piece_randomly(board, label, rook_list_move, player_color):
     if not board.is_game_over():
         legal_moves = list(board.legal_moves)
         random_move = random.choice(legal_moves)
+        print(legal_moves)
         if player_color == chess.BLACK:  # If it's black player's turn
             user_input = input("Enter your King move (e.g., 'f8'): ")
             if user_input:
@@ -803,10 +846,10 @@ rook_list_move = ["a1a8", "a8d8"]
 board = chess.Board()
 board.clear()
 
-white_king_last = "h7"
-black_king_last = "e5"
-rook_1_last = "h1"
-rook_2_last = "h8"
+white_king_last = "a7"
+black_king_last = "c6"
+rook_1_last = "a8"
+rook_2_last = "b8"
 
 board.set_piece_at(chess.parse_square(white_king_last), chess.Piece(chess.KING, chess.WHITE))
 board.set_piece_at(chess.parse_square(black_king_last), chess.Piece(chess.KING, chess.BLACK))
@@ -832,7 +875,7 @@ while not board.is_game_over():
         # legal_moves = list(board.legal_moves)
 
     root.update()  # GUI update !!!!
-    time.sleep(0.5)
+    time.sleep(0.1)
 
 print("Game Over")
 # move_black_king_randomly(board, label)
