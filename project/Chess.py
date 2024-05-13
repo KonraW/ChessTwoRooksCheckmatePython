@@ -7,7 +7,6 @@ from PIL import Image, ImageTk
 import tkinter as tk
 from io import BytesIO
 
-
 class Node:
     def __init__(self, x, y, parent=None):
         self.x = x
@@ -17,17 +16,23 @@ class Node:
         self.h = 0
         self.f = 0
 
-
-def is_valid_move(x1, y1, x2, y2):
-    # Sprawdzenie czy ruch jest dozwolony dla królowej
-    dx = abs(x2 - x1)
-    dy = abs(y2 - y1)
-    return (dx == dy or x1 == x2 or y1 == y2)
-
+def is_valid_move(start_x, start_y, end_x, end_y):
+    # Check if the move is allowed for the queen
+    dx = abs(end_x - start_x)
+    dy = abs(end_y - start_y)
+    return (dx == dy or start_x == end_x or start_y == end_y)
 
 def is_valid_position(x, y, obstacles):
-    return (x, y) not in obstacles
-
+    # Check if the position is within the bounds of the chessboard
+    if x < 0 or x > 7 or y < 0 or y > 7:
+        return False
+    # Check if the position is obstructed by any obstacles
+    for obstacle in obstacles:
+        obstacle_x = ord(obstacle[0]) - ord('a')
+        obstacle_y = int(obstacle[1]) - 1
+        if x == obstacle_x and y == obstacle_y:
+            return False
+    return True
 
 def astar(start, goal, obstacles):
     start_x, start_y = ord(start[0]) - ord('a'), int(start[1]) - 1
@@ -42,14 +47,8 @@ def astar(start, goal, obstacles):
     open_list.append(start_node)
 
     while open_list:
-        current_node = open_list[0]
-        current_index = 0
-        for index, item in enumerate(open_list):
-            if item.f < current_node.f:
-                current_node = item
-                current_index = index
-
-        open_list.pop(current_index)
+        current_node = min(open_list, key=lambda node: node.f)
+        open_list.remove(current_node)
         closed_list.append(current_node)
 
         if current_node.x == goal_node.x and current_node.y == goal_node.y:
@@ -60,45 +59,35 @@ def astar(start, goal, obstacles):
             path = path[::-1]  # Remove the starting position below added UWAGA
             return path[1:]
 
-        for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]:
-            node_position = (current_node.x + new_position[0], current_node.y + new_position[1])
+        for dx, dy in [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]:
+            new_x, new_y = current_node.x + dx, current_node.y + dy
 
-            if node_position[0] < 0 or node_position[0] >= 8 or node_position[1] < 0 or node_position[1] >= 8:
+            if not is_valid_move(current_node.x, current_node.y, new_x, new_y):
                 continue
 
-            if not is_valid_move(current_node.x, current_node.y, node_position[0], node_position[1]):
+            if not is_valid_position(new_x, new_y, obstacles):
                 continue
 
-            if (chr(node_position[0] + ord('a')), node_position[1] + 1) in obstacles:
-                continue
-
-            if any(node_position[0] == node.x and node_position[1] == node.y for node in closed_list):
-                continue
-
-            new_node = Node(node_position[0], node_position[1], current_node)
-
+            new_node = Node(new_x, new_y, current_node)
             new_node.g = current_node.g + 1
             new_node.h = ((new_node.x - goal_node.x) ** 2) + ((new_node.y - goal_node.y) ** 2)
             new_node.f = new_node.g + new_node.h
-
-            for open_node in open_list:
-                if new_node.x == open_node.x and new_node.y == open_node.y and new_node.g > open_node.g:
-                    continue
 
             open_list.append(new_node)
 
     return None
 
-
-# Przykładowe użycie:
+# Example usage:
 start = "a1"
 goal = "e8"
-obstacles = [('c', 3), ("b", 8)]  # Przeszkody w postaci listy krotek (x, y)
+obstacles = ["c3", "b8"]  # Obstacles in the form of a list of strings
 
-droga = astar(start, goal, obstacles)
+path = astar(start, goal, obstacles)
+
+print(path)
 
 
-# print(droga)
+
 
 
 def update_board_image(board, label):
@@ -212,7 +201,7 @@ def white_king_to_opposite_corner(legal_moves):
     global is_king_path
     global king_ooo
     global bad_corner
-    a1_white = astar(white_king_last, "a1", [black_king_last])  # , rook_1_last, rook_2_last])
+    a1_white = astar(white_king_last, "a1", [black_king_last])
     a8_white = astar(white_king_last, "a8", [black_king_last])
     h1_white = astar(white_king_last, "h1", [black_king_last])
     h8_white = astar(white_king_last, "h8", [black_king_last])
@@ -220,55 +209,63 @@ def white_king_to_opposite_corner(legal_moves):
     a8_black = astar(black_king_last, "a8", [white_king_last])
     h1_black = astar(black_king_last, "h1", [white_king_last])
     h8_black = astar(black_king_last, "h8", [white_king_last])
-    if len(a1_white) - 1 < len(a1_black):
+    if len(a1_white) - 2 < len(a1_black):
         king_path = astar(white_king_last, "b2", [black_king_last])
         king_path.append("a1")
         if rook_1_last != "a1" and rook_2_last != "a1":
             king_path = astar(white_king_last, "a1", [black_king_last, rook_1_last, rook_2_last])
+            black_king_path = astar(black_king_last, "a1", [white_king_last, rook_1_last, rook_2_last])
             is_king_path = 1
-            print(rook_1_last, rook_2_last)
-            # print(king_path)
-            if chess.Move.from_uci(white_king_last + king_path[0]) in legal_moves:
-                return white_king_last + king_path.pop(0)
-            else:
-                return move_to_other_corner()
-    if len(a8_white) - 1 < len(a8_black):
+            # print(rook_1_last, rook_2_last)
+            if len(king_path)<=len(black_king_path):
+                print(king_path)
+                if chess.Move.from_uci(white_king_last + king_path[0]) in legal_moves:
+                    return white_king_last + king_path.pop(0)
+                else:
+                    return move_to_other_corner()
+    if len(a8_white) - 2 < len(a8_black):
         king_path = astar(white_king_last, "b7", [black_king_last])
         king_path.append("a8")
         if rook_1_last != "a8" and rook_2_last != "a8":
             king_path = astar(white_king_last, "a8", [black_king_last, rook_1_last, rook_2_last])
+            black_king_path = astar(black_king_last, "a8", [white_king_last, rook_1_last, rook_2_last])
             is_king_path = 1
-            print(rook_1_last, rook_2_last)
-            # print(king_path)
-            if chess.Move.from_uci(white_king_last + king_path[0]) in legal_moves:
-                return white_king_last + king_path.pop(0)
-            else:
-                return move_to_other_corner()
+            # print(rook_1_last, rook_2_last)
+            print(king_path)
+            if len(king_path)<=len(black_king_path):
+                if chess.Move.from_uci(white_king_last + king_path[0]) in legal_moves:
+                    return white_king_last + king_path.pop(0)
+                else:
+                    return move_to_other_corner()
     print(h1_white, h1_black)
-    if len(h1_white) - 1 < len(h1_black):
+    if len(h1_white) - 2 < len(h1_black):
         king_path = astar(white_king_last, "g2", [black_king_last])
         king_path.append("h1")
         if rook_1_last != "h1" and rook_2_last != "h1":
             king_path = astar(white_king_last, "h1", [black_king_last, rook_1_last, rook_2_last])
+            black_king_path = astar(black_king_last, "h1", [white_king_last, rook_1_last, rook_2_last])
             is_king_path = 1
-            print(rook_1_last, rook_2_last)
-            # print(king_path)
-            if chess.Move.from_uci(white_king_last + king_path[0]) in legal_moves:
-                return white_king_last + king_path.pop(0)
-            else:
-                return move_to_other_corner()
-    if len(h8_white) - 1 < len(h8_black):
+            # print(rook_1_last, rook_2_last)
+            print(king_path)
+            if len(king_path)<=len(black_king_path):
+                if chess.Move.from_uci(white_king_last + king_path[0]) in legal_moves:
+                    return white_king_last + king_path.pop(0)
+                else:
+                    return move_to_other_corner()
+    if len(h8_white) - 2 < len(h8_black):
         king_path = astar(white_king_last, "g7", [black_king_last])
         king_path.append("h8")
         if rook_1_last != "h8" and rook_2_last != "h8":
             king_path = astar(white_king_last, "h8", [black_king_last, rook_1_last, rook_2_last])
+            black_king_path = astar(black_king_last, "h8", [white_king_last, rook_1_last, rook_2_last])
             is_king_path = 1
-            print(rook_1_last, rook_2_last)
-            # print(king_path)
-            if chess.Move.from_uci(white_king_last + king_path[0]) in legal_moves:
-                return white_king_last + king_path.pop(0)
-            else:
-                return move_to_other_corner()
+            # print(rook_1_last, rook_2_last)
+            print(king_path)
+            if len(king_path)<=len(black_king_path):
+                if chess.Move.from_uci(white_king_last + king_path[0]) in legal_moves:
+                    return white_king_last + king_path.pop(0)
+                else:
+                    return move_to_other_corner()
 
     # if len(king_path) == 1:
     is_king_path = 2
@@ -446,7 +443,7 @@ def start_checkmate(legal_moves):
         if attack_column_or_row == 1:
             if rook_1_last[1] < rook_2_last[1]:
                 if chess.square_distance(chess.parse_square(rook_1_last[0] + str(int(rook_2_last[1]) + 1)),
-                                         chess.parse_square(black_king_last)) == 1 or rook_1_last + rook_1_last[0] + str(int(rook_2_last[1]) + 1)==white_king_last:
+                                         chess.parse_square(black_king_last)) == 1 or rook_1_last[0] + str(int(rook_2_last[1]) + 1)==white_king_last:
                     for row in rows:
                         if not under_attack2(rook_1_last, rook_2_last, row) and row != rook_1_last[0] and row != \
                                 rook_2_last[0]:
@@ -457,7 +454,7 @@ def start_checkmate(legal_moves):
                 return rook_1_last + rook_1_last[0] + str(int(rook_2_last[1]) + 1)
             else:
                 if chess.square_distance(chess.parse_square(rook_2_last[0] + str(int(rook_1_last[1]) + 1)),
-                                         chess.parse_square(black_king_last)) == 1 or rook_2_last + rook_2_last[0] + str(int(rook_1_last[1]) + 1)==white_king_last:
+                                         chess.parse_square(black_king_last)) == 1 or rook_2_last[0] + str(int(rook_1_last[1]) + 1)==white_king_last:
                     for row in rows:
                         if not under_attack2(rook_1_last, rook_2_last, row) and row != rook_1_last[0] and row != \
                                 rook_2_last[0]:
@@ -468,7 +465,7 @@ def start_checkmate(legal_moves):
         else:
             if rook_1_last[0] < rook_2_last[0]:
                 if chess.square_distance(chess.parse_square(chr(ord(rook_2_last[0]) + 1) + rook_1_last[1]),
-                                         chess.parse_square(black_king_last)) == 1 or rook_1_last + chr(ord(rook_2_last[0]) + 1) + rook_1_last[1]==white_king_last:
+                                         chess.parse_square(black_king_last)) == 1 or  chr(ord(rook_2_last[0]) + 1) + rook_1_last[1]==white_king_last:
                     for row in rows:
                         if not under_attack2(rook_1_last, rook_2_last, row) and row != rook_1_last[1] and row != \
                                 rook_2_last[1]:
@@ -491,7 +488,7 @@ def start_checkmate(legal_moves):
         if attack_column_or_row == 1:
             if rook_1_last[1] > rook_2_last[1]:
                 if chess.square_distance(chess.parse_square(rook_1_last[0] + str(int(rook_2_last[1]) - 1)),
-                                         chess.parse_square(black_king_last)) == 1 or rook_1_last + rook_1_last[0] + str(int(rook_2_last[1]) - 1)==white_king_last:
+                                         chess.parse_square(black_king_last)) == 1 or + rook_1_last[0] + str(int(rook_2_last[1]) - 1)==white_king_last:
                     for row in rows:
                         if not under_attack2(rook_1_last, rook_2_last, row) and row != rook_1_last[0] and row != \
                                 rook_2_last[0]:
@@ -501,7 +498,7 @@ def start_checkmate(legal_moves):
                 return rook_1_last + rook_1_last[0] + str(int(rook_2_last[1]) - 1)
             else:
                 if chess.square_distance(chess.parse_square(rook_2_last[0] + str(int(rook_1_last[1]) - 1)),
-                                         chess.parse_square(black_king_last)) == 1 or rook_2_last + rook_2_last[0] + str(int(rook_1_last[1]) - 1)==white_king_last:
+                                         chess.parse_square(black_king_last)) == 1 or rook_2_last[0] + str(int(rook_1_last[1]) - 1)==white_king_last:
                     for row in rows:
                         if not under_attack2(rook_1_last, rook_2_last, row) and row != rook_1_last[0] and row != \
                                 rook_2_last[0]:
@@ -512,7 +509,7 @@ def start_checkmate(legal_moves):
         else:
             if rook_1_last[0] > rook_2_last[0]:
                 if chess.square_distance(chess.parse_square(chr(ord(rook_2_last[0]) - 1) + rook_1_last[1]),
-                                         chess.parse_square(black_king_last)) == 1 or rook_1_last + chr(ord(rook_2_last[0]) - 1) + rook_1_last[1] == white_king_last:
+                                         chess.parse_square(black_king_last)) == 1 or  chr(ord(rook_2_last[0]) - 1) + rook_1_last[1] == white_king_last:
                     for row in rows:
                         if not under_attack2(rook_1_last, rook_2_last, row) and row != rook_1_last[1] and row != \
                                 rook_2_last[1]:
@@ -522,7 +519,7 @@ def start_checkmate(legal_moves):
                 return rook_1_last + chr(ord(rook_2_last[0]) - 1) + rook_1_last[1]
             else:
                 if chess.square_distance(chess.parse_square(chr(ord(rook_1_last[0]) - 1) + rook_2_last[1]),
-                                         chess.parse_square(black_king_last)) == 1 or rook_2_last + chr(ord(rook_1_last[0]) - 1) + rook_2_last[1] == white_king_last:
+                                         chess.parse_square(black_king_last)) == 1 or  chr(ord(rook_1_last[0]) - 1) + rook_2_last[1] == white_king_last:
                     for row in rows:
                         if not under_attack2(rook_1_last, rook_2_last, row) and row != rook_1_last[1] and row != \
                                 rook_2_last[1]:
@@ -567,6 +564,20 @@ def under_attack2(rook_1_last, rook_2_last, row):
         if chess.square_distance(chess.parse_square(rook_2_last[0] + row), chess.parse_square(black_king_last)) == 1:
             return True
 
+# def move_to_other_corner():
+#     global white_king_last
+#     global king_path
+#     global is_king_path
+#     if (white_king_last == "a2" or white_king_last == "h7") and chess.square_distance(chess.parse_square(king_path[0]), chess.parse_square(black_king_last)) == 1:
+#         king_path = astar(white_king_last, "a8", [black_king_last])
+#     elif (white_king_last == "h2" or white_king_last == "b8") and chess.square_distance(chess.parse_square(king_path[0]), chess.parse_square(black_king_last)) == 1:
+#         king_path = astar(white_king_last, "h8", [black_king_last])
+#     elif (white_king_last == "a7" or white_king_last == "g1") and chess.square_distance(chess.parse_square(king_path[0]), chess.parse_square(black_king_last)) == 1:
+#         king_path = astar(white_king_last, "a1", [black_king_last])
+#     elif (white_king_last == "h7" or white_king_last == "b1") and chess.square_distance(chess.parse_square(king_path[0]), chess.parse_square(black_king_last)) == 1:
+#         king_path = astar(white_king_last, "h1", [black_king_last])
+#     is_king_path = 1
+#     return white_king_last + king_path.pop(0)
 
 def move_to_other_corner():
     global white_king_last
@@ -814,7 +825,7 @@ def move_piece_randomly(board, label, rook_list_move, player_color):
     if not board.is_game_over():
         legal_moves = list(board.legal_moves)
         random_move = random.choice(legal_moves)
-        print(legal_moves)
+        # print(legal_moves)
         if player_color == chess.BLACK:  # If it's black player's turn
             user_input = input("Enter your King move (e.g., 'f8'): ")
             if user_input:
@@ -822,7 +833,7 @@ def move_piece_randomly(board, label, rook_list_move, player_color):
                 king_from_square = chess.parse_square(black_king_last)
                 move = chess.Move(king_from_square, target_square)
                 print(move)
-                print(legal_moves)
+                # print(legal_moves)
                 if move in legal_moves:
                     random_move = move
             black_king_last = chess.square_name(random_move.to_square)
@@ -846,10 +857,10 @@ rook_list_move = ["a1a8", "a8d8"]
 board = chess.Board()
 board.clear()
 
-white_king_last = "a7"
-black_king_last = "c6"
-rook_1_last = "a8"
-rook_2_last = "b8"
+white_king_last = "c8"
+black_king_last = "d6"
+rook_1_last = "b8"
+rook_2_last = "b7"
 
 board.set_piece_at(chess.parse_square(white_king_last), chess.Piece(chess.KING, chess.WHITE))
 board.set_piece_at(chess.parse_square(black_king_last), chess.Piece(chess.KING, chess.BLACK))
