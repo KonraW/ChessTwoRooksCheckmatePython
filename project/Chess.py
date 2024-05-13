@@ -678,7 +678,7 @@ def move_rook(rook1_danger, rook2_danger, legal_moves):
                 #             else:
                 #                 return rook_1_last + row + rook_1_last[1]
         else:
-            if black_king_last[0] > rook_1_last[0]:
+            if black_king_last[0] < rook_1_last[0]:
                 attack_direction = 1
             if white_king_last[0] == "a":
                 columns = ["b", "c", "h", "g"]
@@ -803,10 +803,10 @@ rook_list_move = ["a1a8", "a8d8"]
 board = chess.Board()
 board.clear()
 
-white_king_last = "e1"
+white_king_last = "h7"
 black_king_last = "e5"
-rook_1_last = "b8"
-rook_2_last = "a8"
+rook_1_last = "h1"
+rook_2_last = "h8"
 
 board.set_piece_at(chess.parse_square(white_king_last), chess.Piece(chess.KING, chess.WHITE))
 board.set_piece_at(chess.parse_square(black_king_last), chess.Piece(chess.KING, chess.BLACK))
