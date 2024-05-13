@@ -907,6 +907,8 @@ photo_image = ImageTk.PhotoImage(image)
 label = tk.Label(root, image=photo_image)
 label.pack()
 
+# update_board_image(board, label)
+
 while not board.is_game_over():
     if not board.turn:  # Black moves
         move_piece_randomly(board, label, rook_list_move, chess.BLACK)
@@ -915,7 +917,7 @@ while not board.is_game_over():
         # legal_moves = list(board.legal_moves)
 
     root.update()  # GUI update !!!!
-    time.sleep(0.1)
+    time.sleep(.1)
 
 print("Game Over")
 # move_black_king_randomly(board, label)
