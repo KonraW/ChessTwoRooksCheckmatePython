@@ -250,6 +250,8 @@ def white_king_to_opposite_corner(legal_moves):
                     return white_king_last + king_path#.pop(0)
                 else:
                     return move_to_other_corner(legal_moves)
+            else:
+                return move_to_other_corner(legal_moves)
     if len(a8_white) - 2 < len(a8_black):
         king_path = astar(white_king_last, "b7", [black_king_last])
         king_path.append("a8")
@@ -264,6 +266,8 @@ def white_king_to_opposite_corner(legal_moves):
                     return white_king_last + king_path#.pop(0)
                 else:
                     return move_to_other_corner(legal_moves)
+            else:
+                return move_to_other_corner(legal_moves)
     print(h1_white, h1_black)
     if len(h1_white) - 2 < len(h1_black):
         king_path = astar(white_king_last, "g2", [black_king_last])
@@ -279,6 +283,8 @@ def white_king_to_opposite_corner(legal_moves):
                     return white_king_last + king_path#.pop(0)
                 else:
                     return move_to_other_corner(legal_moves)
+            else:
+                return move_to_other_corner(legal_moves)
     if len(h8_white) - 2 < len(h8_black):
         king_path = astar(white_king_last, "g7", [black_king_last])
         king_path.append("h8")
@@ -289,10 +295,15 @@ def white_king_to_opposite_corner(legal_moves):
             # print(rook_1_last, rook_2_last)
             print(king_path)
             if len(king_path)<=len(black_king_path):
+                if attack_column_or_row == 1:
+                    king_path.insert(0, rook_1_last[0] + "8")  #UPDATETTETRETETT
+                    king_path.insert(0, rook_2_last[0] + "7")
+
                 if chess.Move.from_uci(white_king_last + king_path[0]) in legal_moves:
                     return white_king_last + king_path#.pop(0)
                 else:
                     return move_to_other_corner(legal_moves)
+
 
     # if len(king_path) == 1:
     is_king_path = 2
