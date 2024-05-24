@@ -39,7 +39,6 @@ Przykładowa schemat matowania dwoma wieżami:
 </p>
 
 <p align="left">
-  Końcowy rezultat matowania
   <img src="https://github.com/KonraW/ChessTwoRooksCheckmatePython/assets/64143856/948c7edf-8721-40f8-b9cc-0d71798f2b0b" />
 </p>
   Końcowy rezultat matowania
