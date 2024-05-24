@@ -16,7 +16,6 @@ zrestartować kernele i odpalić
 **tkinter**: Tkinter to standardowa biblioteka GUI w Pythonie, która umożliwia tworzenie prostych i zaawansowanych interfejsów użytkownika, oferując elementy takie jak okna, przyciski, pola tekstowe i wiele innych.<br><br>
 
 
-
 ## Przykładowa schemat matowania dwoma wieżami:
 <p align="left">
   <p>
