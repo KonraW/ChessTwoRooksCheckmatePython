@@ -5,41 +5,8 @@ gtk3-runtime-3.24.31-2022-01-04-ts-win64.exe
 pip install pycairo
 zrestartować kernele i odpalić
 
-# Chess Library
 
-## Opcja 1: Chess Simulation
-
-Biblioteka `chess` umożliwia symulację gier w szachy, zarówno dla komputera jak i graczy ludzkich. Oferuje funkcje takie jak:
-
-- Sprawdzanie legalności ruchów
-- Wyliczanie wyników partii
-- Analiza pozycji
-
-## Opcja 2: Random Module
-
-Moduł `random` dostarcza funkcje do generowania liczb losowych, co jest przydatne w wielu aplikacjach, od generowania losowych ruchów w grze w szachy po tworzenie losowych danych testowe.
-
-## Opcja 3: Time Module
-
-Moduł `time` pozwala na mierzenie czasu wykonania operacji lub oczekiwania na określony czas, co może być użyteczne w programach wymagających precyzyjnego śledzenia czasu, np. w symulacjach gier.
-
-## Opcja 4: Chess SVG Representation
-
-Moduł `chess.svg` z biblioteki `chess` umożliwia generowanie reprezentacji stanu szachowego w formacie SVG, co jest przydatne do tworzenia graficznych prezentacji gier szachowych.
-
-## Opcja 5: CairoSVG Conversion Tool
-
-CairoSVG to narzędzie do konwersji plików SVG na inne formaty, takie jak PNG czy PDF, co pozwala na łatwe przetwarzanie i wyświetlanie grafiki w różnych aplikacjach.
-
-## Opcja 6: ImageTk Integration
-
-Moduł `ImageTk` jest częścią biblioteki Pillow i służy do integracji obrazów Pythona z interfejsem Tkinter, umożliwiając wyświetlanie obrazów w aplikacjach GUI.
-
-## Opcja 7: Tkinter GUI Library
-
-Tkinter to standardowa biblioteka GUI w Pythonie, która umożliwia tworzenie prostych i zaawansowanych interfejsów użytkownika, oferując elementy takie jak okna, przyciski, pola tekstowe i wiele innych.
-
-
+## Biblioteki użyte w programie
 chess: Biblioteka chess umożliwia symulację gier w szachy, zarówno dla komputera jak i graczy ludzkich, oferując funkcje takie jak sprawdzanie legalności ruchów, wyliczanie wyników partii oraz analizę pozycji.
 random: Moduł random dostarcza funkcje do generowania liczb losowych, co jest przydatne w wielu aplikacjach, od generowania losowych ruchów w grze w szachy po tworzenie losowych danych testowe.
 time: Moduł time pozwala na mierzenie czasu wykonania operacji lub oczekiwania na określony czas, co może być użyteczne w programach wymagających precyzyjnego śledzenia czasu, np. w symulacjach gier.
@@ -49,7 +16,7 @@ ImageTk: Moduł ImageTk jest częścią biblioteki Pillow i służy do integracj
 tkinter: Tkinter to standardowa biblioteka GUI w Pythonie, która umożliwia tworzenie prostych i zaawansowanych interfejsów użytkownika, oferując elementy takie jak okna, przyciski, pola tekstowe i wiele innych.
 
 
-Przykładowa schemat matowania dwoma wieżami:
+## Przykładowa schemat matowania dwoma wieżami:
 <p align="left">
   <p>
     Skrypt powoduje, że dwie wieże najpierw się z sobą łączą tak, żeby nie dało się ich zbić, najpierw idą na jedną linię.
