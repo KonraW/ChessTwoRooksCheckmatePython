@@ -6,7 +6,7 @@ pip install pycairo
 zrestartować kernele i odpalić
 
 Przykładowa schemat matowania dwoma wieżami:
-<p align="center">
+<p align="left">
   <p>
     Skrypt powoduje, że dwie wieże najpierw się z sobą łączą tak, żeby nie dało się ich zbić, najpierw idą na jedną linię.
   </p>
@@ -14,7 +14,7 @@ Przykładowa schemat matowania dwoma wieżami:
   <br />
 </p>
 
-<p align="center">
+<p align="left">
   <p>
     Następnie stają obok siebie (poziomo lub pionowo)
   </p>
@@ -22,44 +22,27 @@ Przykładowa schemat matowania dwoma wieżami:
   <br />
 </p>
 
-<p align="center">
+<p align="left">
   W kolejnym kroku biały król udaje się do narożnika do którego ma bliżej niż czarny król, jeżeli w narożniku znajduje się wieża to skrypt zwalnia miejsce w narożniku poruszając wieże o jedno pole, tak, żeby król mógł tam wskoczyć.
   Do obliczenia najkrótszej trasy używamy algorytm A*
   <img src="https://github.com/KonraW/ChessTwoRooksCheckmatePython/assets/64143856/50de2fa0-c93c-425b-8c20-42fffd5d8d06" />
 </p>
 
-<p align="center">
+<p align="left">
   Po dojściu króla do konkretnego narożnika i złączeniu wież następuje proces matowania (schodkowy)
   <img src="https://github.com/KonraW/ChessTwoRooksCheckmatePython/assets/64143856/dbc57080-cf67-4b62-a6bc-8064d74b0a5f" />
 </p>
 
-<p align="center">
+<p align="left">
   Z każdym kolejnym ruchem król jest spychany do bocznej linii planszy gdzie ostatecznie zostanie zamatowany
   <img src="https://github.com/KonraW/ChessTwoRooksCheckmatePython/assets/64143856/9a8fbdf5-d33b-4ec1-8b2a-30f32cfab306" />
 </p>
 
-<p align="center">
+<p align="left">
   Końcowy rezultat matowania
   <img src="https://github.com/KonraW/ChessTwoRooksCheckmatePython/assets/64143856/948c7edf-8721-40f8-b9cc-0d71798f2b0b" />
 </p>
   Końcowy rezultat matowania
- ![image](https://github.com/KonraW/ChessTwoRooksCheckmatePython/assets/64143856/948c7edf-8721-40f8-b9cc-0d71798f2b0b)
-</p>
-
-Większość wyjątkowych, nietypowych sytuacji została zawarta w skrypcie.
-
-W kolejnym kroku biały król udaje się do narożnika do którego ma bliżej niż czarny król, jeżeli w narożniku znajduje się wieża to skrypt zwalnia miejsce w narożniku poruszając wieże o jedno pole, tak, żeby król mógł tam wskoczyć.
-Do obliczenia najkrótszej trasy używamy algorytm A*
-![image](https://github.com/KonraW/ChessTwoRooksCheckmatePython/assets/64143856/50de2fa0-c93c-425b-8c20-42fffd5d8d06)
-
-Po dojściu króla do konkretnego narożnika i złączeniu wież następuje proces matowania (schodkowy)
-![image](https://github.com/KonraW/ChessTwoRooksCheckmatePython/assets/64143856/dbc57080-cf67-4b62-a6bc-8064d74b0a5f)
-
-Z każdym kolejnym ruchem król jest spychany do bocznej linii planszy gdzie ostatecznie zostanie zamatowany
-![image](https://github.com/KonraW/ChessTwoRooksCheckmatePython/assets/64143856/9a8fbdf5-d33b-4ec1-8b2a-30f32cfab306)
-
-Końcowy rezultat matowania
-![image](https://github.com/KonraW/ChessTwoRooksCheckmatePython/assets/64143856/948c7edf-8721-40f8-b9cc-0d71798f2b0b)
 
 Większość wyjątkowych, nietypowych sytuacji została zawarta w skrypcie.
 
