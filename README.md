@@ -1,12 +1,20 @@
+# ChessTwoRooksCheckmatePython
+
 Jak coś nie działa to pobrać:
 gtk3-runtime-3.24.31-2022-01-04-ts-win64.exe
 pip install pycairo
 zrestartować kernele i odpalić
 
-
 Przykładowa schemat matowania dwoma wieżami:
-Skrypt powoduje, że dwie wieże najpierw się z sobą łączą tak, żeby nie dało się ich zbić, najpierw idą na jedną linię.
-![image](https://github.com/KonraW/ChessTwoRooksCheckmatePython/assets/64143856/5cc8a23f-e5f0-43cb-a45b-4207851dfef6)
+<p align="center">
+  <p>
+    Skrypt powoduje, że dwie wieże najpierw się z sobą łączą tak, żeby nie dało się ich zbić, najpierw idą na jedną linię.
+  </p>
+  <img src="https://github.com/KonraW/ChessTwoRooksCheckmatePython/assets/64143856/5cc8a23f-e5f0-43cb-a45b-4207851dfef6" />    
+  <br />
+</p>
+
+
 
 Następnie stają obok siebie (poziomo lub pionowo)
 ![image](https://github.com/KonraW/ChessTwoRooksCheckmatePython/assets/64143856/63a1a226-f9a5-4228-b820-602d4b7eec7f)
