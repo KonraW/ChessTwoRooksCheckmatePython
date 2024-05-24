@@ -45,3 +45,9 @@ Przykładowa schemat matowania dwoma wieżami:
 
 Większość wyjątkowych, nietypowych sytuacji została zawarta w skrypcie.
 
+Wyjątek, schowania króla do rogu
+<p align="left">
+  <img src="https://github.com/KonraW/ChessTwoRooksCheckmatePython/assets/64143856/cef746ba-7294-4984-a4a0-e5a3e4840965" />
+</p>
+
+
