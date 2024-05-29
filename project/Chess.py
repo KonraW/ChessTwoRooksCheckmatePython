@@ -308,6 +308,9 @@ def white_king_to_opposite_corner(legal_moves):
         if len(king_path) > 1:
             king_ooo = [king_path[-1] + king_path[-2][0] + king_path[-1][1], king_path[-2] + king_path[-1]]
             print(king_path)
+            if rook_1_last in ["a1", "a8","h1","h8"] or rook_2_last in ["a1", "a8","h1","h8"]:
+                king_path = king_path[:-1]
+
             # king_path = king_path[:-1]
             if chess.Move.from_uci(white_king_last + king_path[0]) in legal_moves:
                 return white_king_last + king_path.pop(0)
@@ -326,6 +329,9 @@ def white_king_to_opposite_corner(legal_moves):
         if len(king_path) > 1:
             king_ooo = [king_path[-1] + king_path[-1][0] + king_path[-2][1], king_path[-2] + king_path[-1]]
             print(king_path)
+
+            if rook_1_last in ["a1", "a8","h1","h8"] or rook_2_last in ["a1", "a8","h1","h8"]:
+                king_path = king_path[:-1]
             # king_path = king_path[:-1]
             if chess.Move.from_uci(white_king_last + king_path[0]) in legal_moves:
                 return white_king_last + king_path.pop(0)
@@ -628,15 +634,15 @@ def move_to_other_corner(legal_moves):
     global is_king_path
     # return white_king_to_opposite_corner(legal_moves)
 
-    # if white_king_last == "a2" or white_king_last == "h7":
-    #     king_path = astar(white_king_last, "a8", [black_king_last])
-    # elif white_king_last == "h2" or white_king_last == "b8":
-    #     king_path = astar(white_king_last, "h8", [black_king_last])
-    # elif white_king_last == "a7" or white_king_last == "g1":
-    #     king_path = astar(white_king_last, "a1", [black_king_last])
-    # elif white_king_last == "h7" or white_king_last == "b1":
-    #     king_path = astar(white_king_last, "h1", [black_king_last])
-    # is_king_path = 1
+    if white_king_last == "a2" or white_king_last == "h7":
+        king_path = astar(white_king_last, "a8", [black_king_last])
+    elif white_king_last == "h2" or white_king_last == "b8":
+        king_path = astar(white_king_last, "h8", [black_king_last])
+    elif white_king_last == "a7" or white_king_last == "g1":
+        king_path = astar(white_king_last, "a1", [black_king_last])
+    elif white_king_last == "h7" or white_king_last == "b1":
+        king_path = astar(white_king_last, "h1", [black_king_last])
+    is_king_path = 1
     return white_king_last + king_path.pop(0)
 
 
@@ -954,8 +960,8 @@ board.clear()
 # rook_1_last = "c8"
 # rook_2_last = "e8"
 #
-white_king_last = "c6"
-black_king_last = "d4"
+white_king_last = "a7"
+black_king_last = "c6"
 rook_1_last = "a8"
 rook_2_last = "b8"
 #
