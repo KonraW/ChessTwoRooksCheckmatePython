@@ -308,7 +308,7 @@ def white_king_to_opposite_corner(legal_moves):
         if len(king_path) > 1:
             king_ooo = [king_path[-1] + king_path[-2][0] + king_path[-1][1], king_path[-2] + king_path[-1]]
             print(king_path)
-            king_path = king_path[:-1]
+            # king_path = king_path[:-1]
             if chess.Move.from_uci(white_king_last + king_path[0]) in legal_moves:
                 return white_king_last + king_path.pop(0)
             else:
@@ -326,7 +326,7 @@ def white_king_to_opposite_corner(legal_moves):
         if len(king_path) > 1:
             king_ooo = [king_path[-1] + king_path[-1][0] + king_path[-2][1], king_path[-2] + king_path[-1]]
             print(king_path)
-            king_path = king_path[:-1]
+            # king_path = king_path[:-1]
             if chess.Move.from_uci(white_king_last + king_path[0]) in legal_moves:
                 return white_king_last + king_path.pop(0)
             else:
@@ -873,9 +873,40 @@ def move_piece_randomly(board, label, rook_list_move, player_color):
     global black_king_last
     global rook_1_last
     global rook_2_last
+    global first
+    global back_move
+    global back_move2
     if not board.is_game_over():
         legal_moves = list(board.legal_moves)
         random_move = random.choice(legal_moves)
+        if first==1:
+            first=2
+            board.push(random_move)
+            print(random_move)
+            # update_board_image(board, label)
+            random_move_uci = random_move.uci()
+            back_move = random_move_uci[2:4] + random_move_uci[0:2]
+            return
+        elif first==2:
+            first = 3
+            board.push(random_move)
+            print(random_move)
+            # update_board_image(board, label)
+            random_move_uci = random_move.uci()
+            back_move2 = random_move_uci[2:4] + random_move_uci[0:2]
+            return
+        elif first==3:
+            first=4
+            board.push(chess.Move.from_uci(back_move))
+            print(random_move)
+            # update_board_image(board, label)
+            return
+        elif first==4:
+            first=0
+            board.push(chess.Move.from_uci(back_move2))
+            print(random_move)
+            update_board_image(board, label)
+            return
         # print(legal_moves)
         if player_color == chess.BLACK:  # If it's black player's turn
             user_input = input("Enter your King move (e.g., 'f8'): ")
@@ -908,10 +939,31 @@ rook_list_move = ["a1a8", "a8d8"]
 board = chess.Board()
 board.clear()
 
-white_king_last = "c8"
-black_king_last = "c6"
-rook_1_last = "b8"
-rook_2_last = "d8"
+# white_king_last = "c8"
+# black_king_last = "c6"
+# rook_1_last = "b8"
+# rook_2_last = "d8"
+
+# white_king_last = "c8"
+# black_king_last = "c6"
+# rook_1_last = "b8"
+# rook_2_last = "b7"
+
+# white_king_last = "d8"
+# black_king_last = "d6"
+# rook_1_last = "c8"
+# rook_2_last = "e8"
+#
+white_king_last = "c6"
+black_king_last = "d4"
+rook_1_last = "a8"
+rook_2_last = "b8"
+#
+# white_king_last = "b4"
+# black_king_last = "c6"
+# rook_1_last = "a4"
+# rook_2_last = "d4"
+
 
 board.set_piece_at(chess.parse_square(white_king_last), chess.Piece(chess.KING, chess.WHITE))
 board.set_piece_at(chess.parse_square(black_king_last), chess.Piece(chess.KING, chess.BLACK))
@@ -928,9 +980,11 @@ photo_image = ImageTk.PhotoImage(image)
 
 label = tk.Label(root, image=photo_image)
 label.pack()
-
 # update_board_image(board, label)
-
+# time.sleep(5)
+first=1
+back_move=""
+back_move2=""
 while not board.is_game_over():
     if not board.turn:  # Black moves
         move_piece_randomly(board, label, rook_list_move, chess.BLACK)
@@ -939,7 +993,8 @@ while not board.is_game_over():
         # legal_moves = list(board.legal_moves)
 
     root.update()  # GUI update !!!!
-    time.sleep(.1)
+    if first==0:
+        time.sleep(.1)
 
 print("Game Over")
 # move_black_king_randomly(board, label)
