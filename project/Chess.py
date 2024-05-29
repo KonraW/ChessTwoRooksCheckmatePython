@@ -693,6 +693,34 @@ def stairs_move(legal_moves):
     return move_rook(rook1_danger, rook2_danger, legal_moves)
 
 
+def reset_everything_without_penultimate():
+    global is_king_path
+    global is_start_king_move
+    global bad_corner
+    global is_start_checkmate
+    global attack_column_or_row
+    global attack_direction
+    global black_king_block
+    global king_path
+    global king_ooo
+    global rows
+    global columns
+    global black_king_block
+
+    is_king_path = 0
+    is_start_king_move = False
+    bad_corner = False
+    is_start_checkmate = False
+    attack_column_or_row = 0
+    attack_direction = 0
+    black_king_block = 0
+    king_path = []
+    king_ooo = []
+    rows = []
+    columns = []
+    black_king_block = 0
+
+
 def move_piece_randomly(board, label, rook_list_move, player_color):
     global white_king_last
     global black_king_last
@@ -704,15 +732,17 @@ def move_piece_randomly(board, label, rook_list_move, player_color):
     if not board.is_game_over():
         legal_moves = list(board.legal_moves)
         random_move = random.choice(legal_moves)
-        if first==1:
-            first=2
+        if first == 1:
+            first = 2
+            random_move = chess.Move.from_uci(stairs_move(legal_moves))
+            reset_everything_without_penultimate()
             board.push(random_move)
             print(random_move)
             # update_board_image(board, label)
             random_move_uci = random_move.uci()
             back_move = random_move_uci[2:4] + random_move_uci[0:2]
             return
-        elif first==2:
+        elif first == 2:
             first = 3
             board.push(random_move)
             print(random_move)
@@ -720,14 +750,14 @@ def move_piece_randomly(board, label, rook_list_move, player_color):
             random_move_uci = random_move.uci()
             back_move2 = random_move_uci[2:4] + random_move_uci[0:2]
             return
-        elif first==3:
-            first=4
+        elif first ==3 :
+            first = 4
             board.push(chess.Move.from_uci(back_move))
             print(random_move)
             # update_board_image(board, label)
             return
-        elif first==4:
-            first=0
+        elif first == 4:
+            first = 0
             board.push(chess.Move.from_uci(back_move2))
             print(random_move)
             update_board_image(board, label)
@@ -773,10 +803,20 @@ board.clear()
 # rook_1_last = "c8"
 # rook_2_last = "e8"
 #
-white_king_last = "a7"
-black_king_last = "c6"
-rook_1_last = "a8"
-rook_2_last = "b8"
+# white_king_last = "d6"
+# black_king_last = "d8"
+# rook_1_last = "c7"
+# rook_2_last = "e7"
+
+white_king_last = "c6"
+black_king_last = "a8"
+rook_1_last = "b7"
+rook_2_last = "f3"
+
+# rook_2_lastlast = "b7"
+# black_king_last = "d5"
+# rook_1_last = "a8"
+# rook_2_last = "b8"
 #
 # white_king_last = "b4"
 # black_king_last = "c6"
@@ -813,7 +853,7 @@ while not board.is_game_over():
 
     root.update()  # GUI update !!!!
     if first==0:
-        time.sleep(.1)
+        time.sleep(.5)
 
 print("Game Over")
 # move_black_king_randomly(board, label)
